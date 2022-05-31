@@ -1,2 +1,32 @@
 ### root domain test
 GET http://localhost:8000
+
+##### ADMIN API ######
+### get admin api
+GET http://localhost:8000/api/v1/admin/
+
+### post admin api
+POST http://localhost:8000/api/v1/admin/
+Content-Type: application/json
+
+{
+    "fName":"admin",
+    "lName":"admin",
+    "email":"abcd@gmail.com",
+    "phone":"1234567890",
+    "address":"Sydney",
+    "dob":"1990-08-21",
+    "password":"Admin"
+}
+
+### post admin email verification api
+POST http://localhost:8000/api/v1/admin/email-verification
+Content-Type: application/json
+
+{
+    "email":"abcd@gmail.com",
+  "emailValidationCode":"27730ddf-5167-4ee1-b644-eae3a55c5c48"
+}
+
+### patch admin api
+PATCH http://localhost:8000/api/v1/admin/
