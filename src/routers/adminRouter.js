@@ -63,13 +63,17 @@ router.post('/email-verification',emailVerficationValidation,async(req,res)=>{
     const result = await updateAdmin(filter,update)
     console.log(result)
 
-    result?._id ? 
+   if(result?._id) {
     res.json({
-        status:'success',
-        message:'Email verified successfully, you may login now'
-    })
+      status:'success',
+      message:'Email verified successfully, you may login now'
+  }) 
 
-    : res.json({
+  await updateAdmin(filter,{emailValidationCode:''})
+    return
+   } 
+    
+  res.json({
         status:'error',
         message:'Invalid or expired verification link'
     })
