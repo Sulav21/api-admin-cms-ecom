@@ -1,7 +1,7 @@
 import express from "express";
-import { encryptPassword } from "../../helpers/bcryptHelper.js";
-import { emailVerficationValidation, newAdminValidation } from "../middlewares/joi-validation/adminValidation.js";
-import { insertAdmin,updateAdmin } from "../models/admin/Admin.models.js";
+import { encryptPassword, verifyPassword } from "../../helpers/bcryptHelper.js";
+import { emailVerficationValidation, loginValidation, newAdminValidation } from "../middlewares/joi-validation/adminValidation.js";
+import { getAdmin, insertAdmin,updateAdmin } from "../models/admin/Admin.models.js";
 import { v4 as uuidv4 } from "uuid";
 import { sendMail } from "../../helpers/emailHelper.js";
 const router = express.Router();
@@ -13,6 +13,7 @@ router.get("/", (req, res) => {
   });
 });
 
+// New admin registration
 router.post("/", newAdminValidation, async (req, res, next) => {
   try {
     const hashPassword = encryptPassword(req.body.password);
@@ -54,7 +55,6 @@ router.post("/", newAdminValidation, async (req, res, next) => {
 });
 
 // Email verification router
-
 router.post('/email-verification',emailVerficationValidation,async(req,res)=>{
     console.log(req.body)
     const filter = req.body
@@ -79,11 +79,55 @@ router.post('/email-verification',emailVerficationValidation,async(req,res)=>{
     })
 })
 
-router.patch("/", (req, res) => {
-  res.json({
-    status: "success",
-    message: "PATCH got hit to admin router",
-  });
-});
+// login user with user and password
+// this feature isnot completed yet
+router.post('/login',loginValidation,async(req,res,next)=>{
+  try {
+
+    console.log(req.body)
+    const {email,password} =req.body
+  // query get user by email
+
+  const user = await getAdmin({email})
+  if(user?.id){
+    
+ if(user.status==='inactive') return res.json({
+  status:'error',
+  message:"Your account isnot active yet, please check your email and follow the instructions"
+ })
+    console.log(user)
+    // if user exist compare password,
+    const isMatched = verifyPassword(password,user.password)
+    if(isMatched){
+      user.password=undefined
+      // for now
+    res.json({
+      status:"success",
+      message:"Successful login",
+      user
+    })
+    return
+    }
+   
+    // if match, process for creating JWT
+    // for now, send login access to the user
+
+  }
+  
+  
+    // check for the authentication
+    
+  res.status(401).json({
+    status:"error",
+    message:"Invalid login credentials"
+  })
+    // check for authentication
+  } catch (error) {
+    error.status = 500
+    next(error)
+  }
+ 
+
+})
 
 export default router;

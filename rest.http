@@ -30,3 +30,35 @@ Content-Type: application/json
 
 ### patch admin api
 PATCH http://localhost:8000/api/v1/admin/
+
+### Login admin API
+POST http://localhost:8000/api/v1/admin/login
+Content-Type: application/json
+
+{
+    "email":"sam1@smith.com",
+ "password":"123456"
+}
+
+
+###==========CATEGORY SECTION =============#####
+POST http://localhost:8000/api/v1/category
+Content-Type: application/json
+
+{
+  "parentCatId" : "62a7d59960b99f7b6da2482d",
+  "catName":"Cricket Ball"
+}
+
+### get all active categories
+GET http://localhost:8000/api/v1/category
+
+### update status of categories
+
+PATCH http://localhost:8000/api/v1/category
+Content-Type: application/json
+
+{
+  "_id": "62a7d67a3b89c5ed5290ae68",
+  "status": "active"
+}

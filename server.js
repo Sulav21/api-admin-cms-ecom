@@ -22,6 +22,9 @@ dbconnect()
 import adminRouter from './src/routers/adminRouter.js'
 app.use('/api/v1/admin',adminRouter)
 
+import categoryRouter from './src/routers/categoryRouter.js'
+app.use('/api/v1/category', categoryRouter)
+
 app.get('/',(req,res)=>{
     res.json({
         message:"You have reached the admin API"
