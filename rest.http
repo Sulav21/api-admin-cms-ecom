@@ -62,3 +62,19 @@ Content-Type: application/json
   "_id": "62a7d67a3b89c5ed5290ae68",
   "status": "active"
 }
+
+### post product
+POST http://localhost:8000/api/v1/products
+Content-Type:application/json
+
+{
+  
+    "name":"MacBook Pro 4 Inch",
+    "sku":"MBP-14",
+    "description":"asdfas dsda f sdf sd f sdf  fa fdsf  sdf dsf ",
+    "qty":100,
+    "price":3000,
+    "salesPrice":0,
+    "salesDate":null
+    
+}

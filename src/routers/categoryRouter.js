@@ -1,6 +1,6 @@
 import express from 'express'
 import { newCategoryValidation } from '../middlewares/joi-validation/productCatValidation.js'
-import { getAllCategories, insertCategory,updateCatById } from '../models/category/Category.models.js'
+import { deleteCatByID, getAllCategories, getCategories, insertCategory,updateCatById } from '../models/category/Category.models.js'
 import slugify from 'slugify'
 const router = express.Router()
 
@@ -78,5 +78,57 @@ router.patch('/', async(req,res,next)=>{
         next(error)
     }
 })
+
+router.delete('/',async(req,res,next)=>{
+try{
+const {_id} = req.body
+const filter = {parentCatId:_id}
+const childCats = await getCategories(filter)
+if(childCats.length){
+    return res.json({
+        status:'error',
+        message:"Cannot delete as some child categories depend on this category, please reallocate those to new parent and try again"
+    })
+}
+const result = await deleteCatByID(_id)
+result?._id ?
+
+res.json({
+    status:'success',
+    message:'The category has been deleted'
+}):
+res.json({
+    status:'error',
+    message:'Unable to delete, try again later'
+})
+}catch(error){
+    next(error)
+}
+})
+
+// update category
+router.put("/",newCategoryValidation ,async(req,res,next)=>{
+    try{
+        const {_id,...rest} = req.body
+
+        // const slug = slugify(req.body.catName,{lower:true,trim:true})
+        // console.log(slug)
+        const result = await updateCatById(_id,rest)
+console.log(result)
+        result?._id ?
+        res.json({
+            status:'success',
+            message:"Category has been updated"
+        })
+        :
+        res.json({
+            status:'error',
+            message:"Unable to update category, please try again later"
+        })
+    }catch(error){
+        next(error)
+    }
+})
+
 
 export default router

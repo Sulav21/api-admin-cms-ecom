@@ -22,6 +22,9 @@ dbconnect()
 import adminRouter from './src/routers/adminRouter.js'
 app.use('/api/v1/admin',adminRouter)
 
+import productRouter from './src/routers/productRouter.js'
+app.use('/api/v1/products',productRouter)
+
 import categoryRouter from './src/routers/categoryRouter.js'
 app.use('/api/v1/category', categoryRouter)
 
