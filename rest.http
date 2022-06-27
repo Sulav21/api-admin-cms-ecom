@@ -69,12 +69,64 @@ Content-Type:application/json
 
 {
   
-    "name":"MacBook Pro 4 Inch",
-    "sku":"MBP-14",
+    "name":"MacBook Pro Inch",
+    "sku":"MBP-114",
     "description":"asdfas dsda f sdf sd f sdf  fa fdsf  sdf dsf ",
     "qty":100,
-    "price":3000,
+    "price":3000,axios
     "salesPrice":0,
     "salesDate":null
     
+}
+
+### get all products
+GET http://localhost:8000/api/v1/products
+
+### get single product
+GET http://localhost:8000/api/v1/products/62b0f99c66b6b43fee23971c
+
+### Update product
+PUT http://localhost:8000/api/v1/products
+Content-Type:application/json
+
+{
+  
+    "name":"MacBook asdasd adsasdas Pro Inch",
+    "catId":null,
+    "description":"asdfas dsda f sdf sd f sdf  fa fdsf  sdf dsf ",
+    "qty":100,
+    "price":3000,
+    "salesStartDate":null,
+    "salesEndDate":null,
+    "salesPrice":0,
+    "status":"inactive"
+}
+
+
+#-------------Payment Method API----------------#
+
+### get payment method
+GET http://localhost:8000/api/v1/payment-method
+
+### post payment method
+POST http://localhost:8000/api/v1/payment-method
+Content-Type:application/json
+
+{
+  "name": "Pay BY Credit Card",
+  "status":"active",
+  "description":"Use this payment method to pay by Credit or Debit masterCard"
+}
+
+### delete payment method
+DELETE  http://localhost:8000/api/v1/payment-method/asdsds
+
+### post payment method
+PATCH http://localhost:8000/api/v1/payment-method
+Content-Type:application/json
+
+{
+  "name": "Pay BY Credit Card",
+  "status":"active",
+  "description":"Use this payment method to pay by Credit or Debit masterCard"
 }

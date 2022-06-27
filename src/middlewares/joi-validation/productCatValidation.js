@@ -22,6 +22,7 @@ export const newProductValidation =(req,res,next)=>{
     try{
         const schema = Joi.object({
             _id:SHORTSTR.allow(''),
+            CatId:SHORTSTR.required(),
             status: SHORTSTR,
             name:SHORTSTR.required(),
             sku:SHORTSTR.required(),
@@ -29,9 +30,30 @@ export const newProductValidation =(req,res,next)=>{
             qty:QUANTITY.required(),
             price: PRICE.required(),
             salesPrice: PRICE,
-            salesDate: DATE.allow(null),
+            salesEndDate: DATE.allow(null),
+            salesStartDate: DATE.allow(null),
 
+        })
+        validator(schema,req,res,next)
+    }catch(error){
+        next(error)
+    }
+}
 
+export const updateProductValidation =(req,res,next)=>{
+
+    try{
+        const schema = Joi.object({
+            _id:SHORTSTR.allow(''),
+            catId:SHORTSTR.required(),
+            status: SHORTSTR.required(),
+            name:SHORTSTR.required(),
+            description:LONGSTR.required(),
+            qty:QUANTITY.required(),
+            price: PRICE.required(),
+            salesPrice: PRICE,
+            salesEndDate: DATE.allow(null),
+            salesStartDate: DATE.allow(null),
 
         })
         validator(schema,req,res,next)

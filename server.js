@@ -28,6 +28,10 @@ app.use('/api/v1/products',productRouter)
 import categoryRouter from './src/routers/categoryRouter.js'
 app.use('/api/v1/category', categoryRouter)
 
+import paymentMethodRouter from './src/routers/paymentRouter/paymentMethodRouter.js'
+app.use('/api/v1/payment-method', paymentMethodRouter)
+
+
 app.get('/',(req,res)=>{
     res.json({
         message:"You have reached the admin API"
