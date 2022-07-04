@@ -36,8 +36,8 @@ POST http://localhost:8000/api/v1/admin/login
 Content-Type: application/json
 
 {
-    "email":"sam1@smith.com",
- "password":"123456"
+    "email":"abcd@gmail.com",
+ "password":"Admin1"
 }
 
 
@@ -113,20 +113,21 @@ POST http://localhost:8000/api/v1/payment-method
 Content-Type:application/json
 
 {
-  "name": "Pay BY Credit Card",
-  "status":"active",
-  "description":"Use this payment method to pay by Credit or Debit masterCard"
+  "name": "Pay BY Hundi",
+  "status":"inactive",
+  "description":"Use this payment method to pay by hundi"
 }
 
 ### delete payment method
-DELETE  http://localhost:8000/api/v1/payment-method/asdsds
+DELETE  http://localhost:8000/api/v1/payment-method/62ba37fc981c69b5e3e71ae2
 
 ### post payment method
-PATCH http://localhost:8000/api/v1/payment-method
+PUT http://localhost:8000/api/v1/payment-method
 Content-Type:application/json
 
 {
-  "name": "Pay BY Credit Card",
-  "status":"active",
+  "_id":"62ba30bcd8823910fed52cc8",
+  "name": "Pay BY Master Card",
+  "status":"inactive",
   "description":"Use this payment method to pay by Credit or Debit masterCard"
 }

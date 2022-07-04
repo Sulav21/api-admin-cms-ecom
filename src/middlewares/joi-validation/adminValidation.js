@@ -1,5 +1,5 @@
 import Joi from "joi";
-import {FNAME,LNAME,EMAIL,PHONE,DOB,ADDRESS,PASSWORD,REQUIREDSTR, validator} from './constantValidation.js'
+import {FNAME,LNAME,EMAIL,PHONE,DOB,ADDRESS,PASSWORD,REQUIREDSTR, validator, SHORTSTR} from './constantValidation.js'
 // const fName= Joi.string().alphanum().required().min(3).max(20)
 // const lName= Joi.string().required().min(3).max(20)
 // const email= Joi.string().email({minDomainSegments:2}).required()
@@ -25,6 +25,25 @@ export const newAdminValidation = (req, res, next) => {
     validator(schema,req,res,next)
 
 };
+
+export const updateAdminValidation = (req, res, next) => {
+  const schema = Joi.object({
+    _id: SHORTSTR,
+    fName:FNAME,
+    lName:LNAME,
+    email:EMAIL,
+    phone:PHONE,
+    dob:DOB,
+    address:ADDRESS,
+    password:PASSWORD,
+
+  });
+
+ 
+    validator(schema,req,res,next)
+
+};
+
 
 export const emailVerficationValidation = (req,res,next)=>{
   const schema = Joi.object({
