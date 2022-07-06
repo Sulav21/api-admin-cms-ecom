@@ -4,7 +4,7 @@ const app = express()
 import cors from 'cors'
 import morgan from 'morgan'
 import helmet from 'helmet'
-
+import path from 'path'
 
 const PORT = process.env.PORT || 8000
 
@@ -13,6 +13,11 @@ app.use(express.json())
 app.use(cors())
 app.use(morgan('dev'))
 app.use(helmet())
+
+// serve static content
+const _dirname = path.resolve()
+app.use(express.static(path.join(_dirname,"public")))
+
 
 // mongo db connection
 import { dbconnect } from './src/config/db.js'

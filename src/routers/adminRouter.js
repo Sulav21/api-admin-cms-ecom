@@ -8,11 +8,18 @@ import {
 } from "../middlewares/joi-validation/adminValidation.js";
 import {
   getAdmin,
+  getAdminById,
   insertAdmin,
   updateAdmin,
 } from "../models/admin/Admin.models.js";
 import { v4 as uuidv4 } from "uuid";
-import { sendMail } from "../../helpers/emailHelper.js";
+import { sendMail, otpNotification,profileUpdateNotification } from "../../helpers/emailHelper.js";
+import { createOtp } from "../../helpers/randomGenerator.js";
+import {
+  deleteSession,
+  getSession,
+  insertSession,
+} from "../models/session/sessionModel.js";
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -151,14 +158,14 @@ router.put("/", updateAdminValidation, async (req, res, next) => {
       const isMatched = verifyPassword(password, user.password);
       if (isMatched) {
         // update user
-        const { _id,password, ...rest } = req.body;
+        const { _id, password, ...rest } = req.body;
         const updatedAdmin = await updateAdmin({ _id }, rest);
         if (updatedAdmin?._id) {
           // send email notification saying profile is updated
           return res.json({
             status: "success",
             message: "Admin profile updated succesfully",
-            user:updatedAdmin,
+            user: updatedAdmin,
           });
         }
       }
@@ -172,5 +179,89 @@ router.put("/", updateAdminValidation, async (req, res, next) => {
     next(err);
   }
 });
+
+// Password reset OTP request
+router.post("/otp-request", async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (email) {
+      // check if user exists
+      const user = await getAdmin({ email });
+      if (user?._id) {
+        // create OTP and send email
+        const obj = {
+          token: createOtp(),
+          associate: email,
+          type: "Password reset",
+        };
+        const result = await insertSession(obj);
+        if (result?._id) {
+          console.log(result);
+          res.json({
+            status: "success",
+            message: "Please check your email for a OTP",
+          });
+        }
+
+        // send the OTP to admin email
+        return otpNotification({
+          token: result.token,
+          email: email,
+        });
+      }
+    }
+
+    res.json({
+      status: "error",
+      message: "Invalid request",
+    });
+  } catch (error) {
+    error.status = 500;
+    next(error);
+  }
+});
+
+// reset password
+
+router.patch("/password", async (req, res, next) => {
+  try {
+    const { otp, email, password } = req.body;
+    console.log(req.body);
+
+    // 1. get session info based on the otp, so that we get the use email
+    const session = await deleteSession({ token:otp, associate:email });
+
+    console.log(session);
+    if (session?._id) {
+      const update={
+        password:encryptPassword(password)
+      }
+      const updatedUser = await updateAdmin({email},update)
+      if(updatedUser?._id){
+        // send the email notification 
+        profileUpdateNotification({
+          fName:updatedUser.fName,
+          email:updatedUser.email
+        })
+       return res.json({
+          status: "success",
+          message: "Your password has been updated",
+          user:updatedUser
+        });
+      }
+      
+    }
+    res.json({
+      status: "error",
+      message: "Invalid request, unable to update the password",
+    });
+    // 2.
+  } catch (error) {
+    error.status = 500;
+    next(error);
+  }
+});
+ 
+
 
 export default router;

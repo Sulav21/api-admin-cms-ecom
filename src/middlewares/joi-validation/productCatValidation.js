@@ -20,6 +20,9 @@ export const newCategoryValidation =(req,res,next)=>{
 export const newProductValidation =(req,res,next)=>{
 
     try{
+        req.body.salesStartDate = req.body.salesStartDate==='null' ? null :req.body.salesStartDate
+        req.body.salesEndDate = req.body.salesEndDate==='null' ? null :req.body.salesEndDate
+
         const schema = Joi.object({
             _id:SHORTSTR.allow(''),
             CatId:SHORTSTR.required(),
@@ -41,6 +44,8 @@ export const newProductValidation =(req,res,next)=>{
 }
 
 export const updateProductValidation =(req,res,next)=>{
+    req.body.salesStartDate = req.body.salesStartDate==='null' ? null :req.body.salesStartDate
+    req.body.salesEndDate = req.body.salesEndDate==='null' ? null :req.body.salesEndDate
 
     try{
         const schema = Joi.object({
@@ -54,6 +59,9 @@ export const updateProductValidation =(req,res,next)=>{
             salesPrice: PRICE,
             salesEndDate: DATE.allow(null),
             salesStartDate: DATE.allow(null),
+            images:LONGSTR.allow(null,""),
+            thumbnail:SHORTSTR.allow(null,""),
+            imgToDelete:LONGSTR.allow(null,"")
 
         })
         validator(schema,req,res,next)
