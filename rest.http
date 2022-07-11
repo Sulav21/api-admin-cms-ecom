@@ -40,6 +40,17 @@ Content-Type: application/json
  "password":"Admin1"
 }
 
+### update pasword
+PATCH http://localhost:8000/api/v1/admin/update-password
+Content-Type: application/json
+
+{
+    "email":"sam@smith.com",
+ "password":"aaAA11",
+ "currentPassword":"Admin12"
+ 
+}
+
 
 ###==========CATEGORY SECTION =============#####
 POST http://localhost:8000/api/v1/category

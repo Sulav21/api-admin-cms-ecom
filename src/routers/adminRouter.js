@@ -4,6 +4,7 @@ import {
   emailVerficationValidation,
   loginValidation,
   updateAdminValidation,
+  updatePasswordValidation,
   newAdminValidation,
 } from "../middlewares/joi-validation/adminValidation.js";
 import {
@@ -13,7 +14,11 @@ import {
   updateAdmin,
 } from "../models/admin/Admin.models.js";
 import { v4 as uuidv4 } from "uuid";
-import { sendMail, otpNotification,profileUpdateNotification } from "../../helpers/emailHelper.js";
+import {
+  sendMail,
+  otpNotification,
+  profileUpdateNotification,
+} from "../../helpers/emailHelper.js";
 import { createOtp } from "../../helpers/randomGenerator.js";
 import {
   deleteSession,
@@ -229,27 +234,26 @@ router.patch("/password", async (req, res, next) => {
     console.log(req.body);
 
     // 1. get session info based on the otp, so that we get the use email
-    const session = await deleteSession({ token:otp, associate:email });
+    const session = await deleteSession({ token: otp, associate: email });
 
     console.log(session);
     if (session?._id) {
-      const update={
-        password:encryptPassword(password)
-      }
-      const updatedUser = await updateAdmin({email},update)
-      if(updatedUser?._id){
-        // send the email notification 
+      const update = {
+        password: encryptPassword(password),
+      };
+      const updatedUser = await updateAdmin({ email }, update);
+      if (updatedUser?._id) {
+        // send the email notification
         profileUpdateNotification({
-          fName:updatedUser.fName,
-          email:updatedUser.email
-        })
-       return res.json({
+          fName: updatedUser.fName,
+          email: updatedUser.email,
+        });
+        return res.json({
           status: "success",
           message: "Your password has been updated",
-          user:updatedUser
+          user: updatedUser,
         });
       }
-      
     }
     res.json({
       status: "error",
@@ -261,7 +265,49 @@ router.patch("/password", async (req, res, next) => {
     next(error);
   }
 });
- 
 
+// update password
+router.patch(
+  "/update-password",
+  updatePasswordValidation,
+  async (req, res, next) => {
+    try {
+      const { currentPassword, email, password } = req.body;
+      console.log(req.body);
+      const user = await getAdmin({ email });
+
+      if (user?._id) {
+        const isMatched = verifyPassword(currentPassword, user.password);
+        if (isMatched) {
+          const hashPassword = encryptPassword(req.body.password);
+          const updatedUser = await updateAdmin(
+            {
+              _id: user._id,
+            },
+            {
+              password: hashPassword,
+            }
+
+          );
+          if(updatedUser?._id){
+            profileUpdateNotification({fName:updatedUser.fname,email:updatedUser.email})
+          return res.json({
+            status:'success',
+            message:"Password has been updated successfully"
+          })
+          }
+        }
+      }
+      res.json({
+        status:'error',
+        message:"Unable to update the password"
+      })
+    
+    } catch (error) {
+      error.status = 500;
+      next(error);
+    }
+  }
+);
 
 export default router;
