@@ -1,5 +1,5 @@
 import express from "express";
-import { encryptPassword, verifyPassword } from "../../helpers/bcryptHelper.js";
+import { encryptPassword, verifyPassword } from "../helpers/bcryptHelper.js";
 import {
   emailVerficationValidation,
   loginValidation,
@@ -18,24 +18,37 @@ import {
   sendMail,
   otpNotification,
   profileUpdateNotification,
-} from "../../helpers/emailHelper.js";
-import { createOtp } from "../../helpers/randomGenerator.js";
+} from "../helpers/emailHelper.js";
+import { createOtp } from "../helpers/randomGenerator.js";
 import {
   deleteSession,
   getSession,
   insertSession,
 } from "../models/session/sessionModel.js";
+import { createJWTs, signAccessJwt, verifyRefreshJwt } from "../helpers/jwtHelper.js";
+import { adminAuth } from "../middlewares/auth-middlewares/authMiddlewares.js";
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.json({
-    status: "success",
-    message: "GET got hit to admin router",
-  });
+router.get("/",adminAuth, (req, res) => {
+  try{
+
+    let user = req.adminInfo
+    
+    user.password = undefined
+    user.refreshJWT = undefined
+    res.json({
+      status: "success",
+      message: "GET got hit to admin router",
+      user
+    });
+  }catch(err){
+    next(err)
+  }
+ 
 });
 
 // New admin registration
-router.post("/", newAdminValidation, async (req, res, next) => {
+router.post("/", adminAuth, newAdminValidation, async (req, res, next) => {
   try {
     const hashPassword = encryptPassword(req.body.password);
     req.body.password = hashPassword;
@@ -126,10 +139,12 @@ router.post("/login", loginValidation, async (req, res, next) => {
       if (isMatched) {
         user.password = undefined;
         // for now
+        const jwts = await createJWTs({ email: user.email });
         res.json({
           status: "success",
           message: "Successful login",
           user,
+          jwts,
         });
         return;
       }
@@ -152,7 +167,7 @@ router.post("/login", loginValidation, async (req, res, next) => {
 });
 
 // Update Admin Profile
-router.put("/", updateAdminValidation, async (req, res, next) => {
+router.put("/",adminAuth, updateAdminValidation, async (req, res, next) => {
   try {
     console.log(req.body);
     const { email, password } = req.body;
@@ -268,7 +283,7 @@ router.patch("/password", async (req, res, next) => {
 
 // update password
 router.patch(
-  "/update-password",
+  "/update-password",adminAuth,
   updatePasswordValidation,
   async (req, res, next) => {
     try {
@@ -279,7 +294,7 @@ router.patch(
       if (user?._id) {
         const isMatched = verifyPassword(currentPassword, user.password);
         if (isMatched) {
-          const hashPassword = encryptPassword(req.body.password);
+          const hashPassword = encryptPassword(password);
           const updatedUser = await updateAdmin(
             {
               _id: user._id,
@@ -287,27 +302,57 @@ router.patch(
             {
               password: hashPassword,
             }
-
           );
-          if(updatedUser?._id){
-            profileUpdateNotification({fName:updatedUser.fname,email:updatedUser.email})
-          return res.json({
-            status:'success',
-            message:"Password has been updated successfully"
-          })
+          if (updatedUser?._id) {
+            profileUpdateNotification({
+              fName: updatedUser.fname,
+              email: updatedUser.email,
+            });
+            return res.json({
+              status: "success",
+              message: "Password has been updated successfully",
+            });
           }
         }
       }
       res.json({
-        status:'error',
-        message:"Unable to update the password"
-      })
-    
+        status: "error",
+        message: "Unable to update the password",
+      });
     } catch (error) {
       error.status = 500;
       next(error);
     }
   }
 );
+
+// this will return new accessjwt
+router.get("/accessjwt", async(req, res, next) => {
+  try {
+    const refreshJWT = req.headers.authorization;
+    console.log(refreshJWT);
+    const decoded =verifyRefreshJwt(refreshJWT)
+    if(decoded?.email){
+    // check refJWT valid and exist in db
+      const user = await getAdmin({email:decoded.email,refreshJWT})
+      if(user._id){
+        // create token and return to the client
+        const accessJWT = await signAccessJwt({email:decoded.email})
+        res.json({
+          status:"success",
+         accessJWT
+        })
+      }
+    
+    }
+    res.status(401).json({
+      status:"error",
+      message:'Log out user'
+    })
+  } catch (error) {
+    error.status=401
+    next(error);
+  }
+});
 
 export default router;

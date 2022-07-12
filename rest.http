@@ -31,13 +31,17 @@ Content-Type: application/json
 ### patch admin api
 PATCH http://localhost:8000/api/v1/admin/
 
+### get new accessJWT
+GET http://localhost:8000/api/v1/admin/accessjwt
+Authorization:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhbUBzbWl0aC5jb20iLCJpYXQiOjE2NTc1ODA2MDAsImV4cCI6MTY2MDE3MjYwMH0.ZQA0qLi0ggEYJfG4w4kACEKVRkyWK4HGcsejcvLP8Qw
+
 ### Login admin API
 POST http://localhost:8000/api/v1/admin/login
 Content-Type: application/json
 
 {
-    "email":"abcd@gmail.com",
- "password":"Admin1"
+    "email":"sam@smith.com",
+ "password":"Admin123"
 }
 
 ### update pasword
@@ -55,10 +59,12 @@ Content-Type: application/json
 ###==========CATEGORY SECTION =============#####
 POST http://localhost:8000/api/v1/category
 Content-Type: application/json
+Authorization:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhbUBzbWl0aC5jb20iLCJpYXQiOjE2NTc1MTMzMjAsImV4cCI6MTY1NzUxNDIyMH0._XB5sEn6D8E_gEar90pJ5fOJI12zIQPPIPGmOfUl3cE
 
 {
   "parentCatId" : "62a7d59960b99f7b6da2482d",
-  "catName":"Cricket Ball"
+  "catName":"Cricket Balls",
+  "status":"inactive"
 }
 
 ### get all active categories
@@ -142,3 +148,6 @@ Content-Type:application/json
   "status":"inactive",
   "description":"Use this payment method to pay by Credit or Debit masterCard"
 }
+
+    # "accessJWT": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhbUBzbWl0aC5jb20iLCJpYXQiOjE2NTc1Nzk1NjIsImV4cCI6MTY1NzU4MDQ2Mn0.NkaZZUYZiWDcmunSiAWgBIrdIgCjULnLiY6QZXjvZQI",
+    # "refreshJWT": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhbUBzbWl0aC5jb20iLCJpYXQiOjE2NTc1Nzk1NjIsImV4cCI6MTY2MDE3MTU2Mn0.7_-PO3mt0GY9vN95azfp1-dsyNkXAsDA7v-mSuNqyM0"

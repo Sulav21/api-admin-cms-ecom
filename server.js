@@ -13,6 +13,8 @@ app.use(express.json())
 app.use(cors())
 app.use(morgan('dev'))
 app.use(helmet())
+import { adminAuth } from './src/middlewares/auth-middlewares/authMiddlewares.js'
+
 
 // serve static content
 const _dirname = path.resolve()
@@ -28,13 +30,13 @@ import adminRouter from './src/routers/adminRouter.js'
 app.use('/api/v1/admin',adminRouter)
 
 import productRouter from './src/routers/productRouter.js'
-app.use('/api/v1/products',productRouter)
+app.use('/api/v1/products',adminAuth,productRouter)
 
 import categoryRouter from './src/routers/categoryRouter.js'
-app.use('/api/v1/category', categoryRouter)
+app.use('/api/v1/category', adminAuth , categoryRouter)
 
 import paymentMethodRouter from './src/routers/paymentRouter/paymentMethodRouter.js'
-app.use('/api/v1/payment-method', paymentMethodRouter)
+app.use('/api/v1/payment-method',adminAuth, paymentMethodRouter)
 
 
 app.get('/',(req,res)=>{
@@ -47,8 +49,8 @@ app.get('/',(req,res)=>{
 // global error handling
 
 app.use((err,req,res,next)=>{
-
-    res.status(err.status || 400)
+console.log(err)
+    res.status(err.status || 404)
     res.json({
         status:'error',
         message:err.message
