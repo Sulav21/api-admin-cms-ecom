@@ -90,7 +90,7 @@ Content-Type:application/json
     "sku":"MBP-114",
     "description":"asdfas dsda f sdf sd f sdf  fa fdsf  sdf dsf ",
     "qty":100,
-    "price":3000,axios
+    "price":3000,
     "salesPrice":0,
     "salesDate":null
     
@@ -149,5 +149,6 @@ Content-Type:application/json
   "description":"Use this payment method to pay by Credit or Debit masterCard"
 }
 
-    # "accessJWT": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhbUBzbWl0aC5jb20iLCJpYXQiOjE2NTc1Nzk1NjIsImV4cCI6MTY1NzU4MDQ2Mn0.NkaZZUYZiWDcmunSiAWgBIrdIgCjULnLiY6QZXjvZQI",
-    # "refreshJWT": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhbUBzbWl0aC5jb20iLCJpYXQiOjE2NTc1Nzk1NjIsImV4cCI6MTY2MDE3MTU2Mn0.7_-PO3mt0GY9vN95azfp1-dsyNkXAsDA7v-mSuNqyM0"
+
+###
+GET http://localhost:8000/api/v1/customers

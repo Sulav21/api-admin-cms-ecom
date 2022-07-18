@@ -38,6 +38,9 @@ app.use('/api/v1/category', adminAuth , categoryRouter)
 import paymentMethodRouter from './src/routers/paymentRouter/paymentMethodRouter.js'
 app.use('/api/v1/payment-method',adminAuth, paymentMethodRouter)
 
+import customerRouter from  './src/routers/customerRouter.js'
+app.use('/api/v1/customers', customerRouter)
+
 
 app.get('/',(req,res)=>{
     res.json({
