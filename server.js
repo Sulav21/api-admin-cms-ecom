@@ -39,7 +39,13 @@ import paymentMethodRouter from './src/routers/paymentRouter/paymentMethodRouter
 app.use('/api/v1/payment-method',adminAuth, paymentMethodRouter)
 
 import customerRouter from  './src/routers/customerRouter.js'
-app.use('/api/v1/customers', customerRouter)
+app.use('/api/v1/customers', adminAuth, customerRouter)
+
+import reviewRouter from './src/routers/reviewRouter.js'
+app.use('/api/v1/reviews',adminAuth, reviewRouter)
+
+import orderData from './src/routers/orderRouter.js'
+app.use('/api/v1/orders',adminAuth, orderData)
 
 
 app.get('/',(req,res)=>{
