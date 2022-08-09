@@ -48,7 +48,9 @@ router.get("/",adminAuth, (req, res) => {
 });
 
 // New admin registration
-router.post("/", adminAuth, newAdminValidation, async (req, res, next) => {
+// router.post("/", adminAuth, newAdminValidation, async (req, res, next) => {
+router.post("/",  newAdminValidation, async (req, res, next) => {
+
   try {
     const hashPassword = encryptPassword(req.body.password);
     req.body.password = hashPassword;
